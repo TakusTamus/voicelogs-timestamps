@@ -117,7 +117,7 @@ class VoiceLogs(commands.Cog):
             user_obj = ctx.guild.get_member(entry["user_id"])
             if not user_obj:
                 user_obj = SimpleNamespace(name="Unknown User", id=entry["user_id"])
-            embed.description += f"[{entry['joined_at']}] **{user_obj.name}** ({user_obj.id}) for **{time_spent}**\n"
+            embed.description += f"[{entry['joined_at'].strftime("%%d.%m %H:%M")}] **{user_obj.name}** ({user_obj.id}) for **{time_spent}**\n"
         if len(embed.description) == 0:
             embed.description = f"No voice activity in {voice_channel_name_or_id.mention}"
         await ctx.send(embed=embed)
