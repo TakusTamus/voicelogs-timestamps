@@ -111,7 +111,7 @@ class VoiceLogs(commands.Cog):
             left_at = entry.get("left_at", None)
             if left_at is None:
                 time_spent = "+"
-                left_at = datetime.now(timezone.cet)
+                left_at = datetime.now(timezone.utc)
             time_diff = left_at - entry["joined_at"]
             time_spent = self.humanize_time(round(time_diff.total_seconds())) + time_spent
             user_obj = ctx.guild.get_member(entry["user_id"])
@@ -151,7 +151,7 @@ class VoiceLogs(commands.Cog):
                         lambda e: e["channel_id"] == before.channel.id and "left_at" not in e, user_data
                     )
                     if entry is not None:
-                        entry["left_at"] = datetime.now(timezone.cet).timestamp()
+                        entry["left_at"] = datetime.now(timezone.utc).timestamp()
 
             # Joined that channel
             if after.channel is not None:
@@ -159,7 +159,7 @@ class VoiceLogs(commands.Cog):
                     entry = {
                         "channel_id": after.channel.id,
                         "channel_name": after.channel.name,
-                        "joined_at": datetime.now(timezone.cet).timestamp(),
+                        "joined_at": datetime.now(timezone.utc).timestamp(),
                     }
                     user_info.append(entry)
 
@@ -180,14 +180,14 @@ class VoiceLogs(commands.Cog):
 
     async def cleanup_entries(self):
         try:
-            delete_threshold = datetime.now(timezone.cet) - self.ENTRY_TIME_LIMIT
+            delete_threshold = datetime.now(timezone.utc) - self.ENTRY_TIME_LIMIT
             to_delete = {"history": []}
             user_data = await self.config.all_users()
             for user_id, history in user_data.items():
                 for dict_title, entry_list in history.items():
                     for entry in entry_list:
                         left_at = entry.get("left_at", None)
-                        if left_at is not None and datetime.fromtimestamp(left_at, timezone.cet) < delete_threshold:
+                        if left_at is not None and datetime.fromtimestamp(left_at, timezone.utc) < delete_threshold:
                             entry_list_index = [i for i, d in enumerate(entry_list) if left_at in d.values()]
                             entry_list.pop(entry_list_index[0])
                     await self.config.user_from_id(user_id).history.set(entry_list)
@@ -200,11 +200,11 @@ class VoiceLogs(commands.Cog):
     def map_entries(self, entries):
         for entry in entries:
             new_entry = entry.copy()
-            joined_at = datetime.fromtimestamp(entry["joined_at"], timezone.cet)
+            joined_at = datetime.fromtimestamp(entry["joined_at"], timezone.utc)
             new_entry["joined_at"] = joined_at
             left_at = entry.get("left_at")
             if left_at is not None:
-                new_entry["left_at"] = datetime.fromtimestamp(left_at, timezone.cet)
+                new_entry["left_at"] = datetime.fromtimestamp(left_at, timezone.utc)
             yield new_entry
 
     def format_time(self, moment: datetime):
