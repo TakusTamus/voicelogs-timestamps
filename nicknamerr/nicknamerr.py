@@ -3,7 +3,7 @@ from redbot.core import commands, Config, checks
 from redbot.core.bot import Red
 import asyncio
 
-class GorylCog(commands.Cog):
+class NickNamerr(commands.Cog):
     def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=1234567890)
@@ -49,4 +49,4 @@ class GorylCog(commands.Cog):
 
 # Setup funkcja do ładowania cogu
 def setup(bot: Red):
-    bot.add_cog(GorylCog(bot))
+    bot.add_cog(NickNamerr(bot))
