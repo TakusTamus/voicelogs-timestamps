@@ -1,4 +1,3 @@
-from .nicknamerr import nicknamerr
 
 
 async def setup(bot):
